@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Radar del Talento - Evaluación Final</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      color: #003366;
+    }
+    select, input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .result {
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .green { background-color: #d4edda; color: #155724; }
+    .yellow { background-color: #fff3cd; color: #856404; }
+    .red { background-color: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>Radar del Talento</h1>
+  <form id="talentForm">
+    <label>Fecha de Evaluación:</label>
+    <input type="text" id="fecha" readonly />
+
+    <label>Nombre del participante:</label>
+    <input type="text" id="nombre" required />
+
+    <label>DNI del participante:</label>
+    <input type="text" id="dni" required />
+
+    <label>Zonal:</label>
+    <select id="zonal" required>
+      <option value="">Seleccione</option>
+      <option value="LIMA">LIMA</option>
+      <option value="CHICLAYO">CHICLAYO</option>
+      <option value="TRUJILLO">TRUJILLO</option>
+      <option value="AREQUIPA">AREQUIPA</option>
+    </select>
+
+    <label>Nombre del Formador:</label>
+    <select id="formador" required>
+      <option value="">Seleccione</option>
+      <option value="JANICE ALONZO">JANICE ALONZO</option>
+      <option value="JENNY OLIDEN">JENNY OLIDEN</option>
+      <option value="GIOVANNA ACEVEDO">GIOVANNA ACEVEDO</option>
+      <option value="LUIS CORNELIO">LUIS CORNELIO</option>
+      <option value="CARLOS PEÑAFIELLAS">CARLOS PEÑAFIELLAS</option>
+    </select>
+
+    <h3>Primera Parte</h3>
+    <label>¿Tiene experiencia en ventas?</label>
+    <select id="p1"><option value="1">Sí</option><option value="0">No</option></select>
+
+    <label>¿Actualmente estudia?</label>
+    <select id="p2"><option value="1">Sí</option><option value="0">No</option></select>
+
+    <label>¿Demuestra entusiasmo por bonos?</label>
+    <select id="p3"><option value="1">Sí</option><option value="0">No</option></select>
+
+    <label>¿Acepta trabajo de campo?</label>
+    <select id="p4"><option value="1">Sí</option><option value="0">No</option></select>
+
+    <label>¿Tiene apoyo económico/familiar?</label>
+    <select id="p5"><option value="1">Sí</option><option value="0">No</option></select>
+
+    <h3>Segunda Parte</h3>
+    <label>Nivel de Participación</label>
+    <select id="p6">
+      <option value="1">Activo, pregunta, propone ideas y busca intervenir.</option>
+      <option value="0.5">Participa solo cuando se le pregunta o en momentos puntuales.</option>
+      <option value="0">No participa o evita intervenir.</option>
+    </select>
+
+    <label>Focos de Interés</label>
+    <select id="p7">
+      <option value="1">Se interesa por el modelo de negocio, producto o aspectos técnicos.</option>
+      <option value="0.5">Muestra algo de interés por cultura, equipo o dinámicas.</option>
+      <option value="0">No demuestra interés claro o se distrae.</option>
+    </select>
+
+    <label>Nivel de Energía</label>
+    <select id="p8">
+      <option value="1">Energía alta y constante, contagia al grupo.</option>
+      <option value="0.5">Energía estable, participa con calma.</option>
+      <option value="0">Energía baja, se le ve cansado o desmotivado.</option>
+    </select>
+
+    <label>Actitud y comportamiento</label>
+    <select id="p9">
+      <option value="1">Actitud positiva, respeta reglas, colabora.</option>
+      <option value="0.5">Neutral, sin aportar ni generar conflicto.</option>
+      <option value="0">Actitud negativa o conflictiva.</option>
+    </select>
+
+    <label>Comentarios adicionales:</label>
+    <input type="text" id="comentarios" />
+
+    <button type="button" onclick="evaluar()">Evaluar</button>
+  </form>
+
+  <div id="resultado" class="result"></div>
+  <button id="whatsappBtn" style="display:none;" onclick="compartirWhatsApp()">Compartir por WhatsApp</button>
+
+  <script>
+    document.getElementById("fecha").value = new Date().toLocaleDateString();
+
+    function evaluar() {
+      let fecha = document.getElementById("fecha").value;
+      let nombre = document.getElementById("nombre").value;
+      let dni = document.getElementById("dni").value;
+      let zonal = document.getElementById("zonal").value;
+      let formador = document.getElementById("formador").value;
+
+      let total1 = +document.getElementById("p1").value + +document.getElementById("p2").value + 
+                   +document.getElementById("p3").value + +document.getElementById("p4").value + 
+                   +document.getElementById("p5").value;
+      let total2 = +document.getElementById("p6").value + +document.getElementById("p7").value + 
+                   +document.getElementById("p8").value + +document.getElementById("p9").value;
+
+      let resultadoText = "";
+      let colorClass = "";
+
+      if (total1 < 3 || total2 < 2.5) {
+        resultadoText = "🔴 NO RECOMENDABLE";
+        colorClass = "red";
+      } else if (total1 >= 3 && total2 >= 2.5 && total2 < 3.5) {
+        resultadoText = "🟡 OBSERVADO";
+        colorClass = "yellow";
+      } else {
+        resultadoText = "🟢 RECOMENDABLE";
+        colorClass = "green";
+      }
+
+      const divResultado = document.getElementById("resultado");
+      divResultado.innerHTML = `🗓 Fecha: <strong>${fecha}</strong><br>
+        Resultado para <strong>${nombre}</strong> (DNI: ${dni})<br>
+        Formador: <strong>${formador}</strong><br>
+        Zonal: <strong>${zonal}</strong><br>
+        Resultado: ${resultadoText}`;
+      divResultado.className = "result " + colorClass;
+
+      document.getElementById("whatsappBtn").style.display = "inline-block";
+      document.getElementById("whatsappBtn").setAttribute("data-resultado", `📋 Radar del Talento - ${fecha}
+${nombre} (DNI: ${dni})
+Formador: ${formador}
+Zonal: ${zonal}
+Resultado: ${resultadoText}`);
+
+      // Enviar datos a Google Sheets
+      const formData = new FormData();
+      formData.append("nombre", nombre);
+      formData.append("dni", dni);
+      formData.append("zonal", zonal);
+      formData.append("formador", formador);
+      formData.append("total1", total1);
+      formData.append("total2", total2);
+      formData.append("resultado", resultadoText);
+      formData.append("comentarios", document.getElementById("comentarios").value);
+
+      fetch("https://script.google.com/macros/s/AKfycbxkYUCFXaitB1nhfQVws3FrYNiV9A-QkTFnnwUREQaDARe3sDYrsEphX4-qNgHkC4LY/exec", {
+        method: "POST",
+        body: formData
+      });
+    }
+
+    function compartirWhatsApp() {
+      const resumen = document.getElementById("whatsappBtn").getAttribute("data-resultado");
+      const comentarios = document.getElementById("comentarios").value;
+      const mensaje = encodeURIComponent(`${resumen}
+🗣 Comentarios: ${comentarios}`);
+      window.open(`https://wa.me/?text=${mensaje}`, "_blank");
+    }
+  </script>
+</body>
+</html>
